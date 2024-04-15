@@ -1,14 +1,31 @@
-# TODO: insert resources here.
+##########################################
+### TODO: Add route table subnet assoc ###
+##########################################
+
 data "azurerm_resource_group" "parent" {
   count = var.location == null ? 1 : 0
 
   name = var.resource_group_name
 }
 
-# TODO: Replace this dummy resource azurerm_resource_group.TODO with your module resource
-resource "azurerm_resource_group" "TODO" {
-  location = coalesce(var.location, local.resource_group_location)
-  name     = var.name # calling code must supply the name
+# Create Route Table
+resource "azurerm_route_table" "route_table" {
+  name                          = var.route_table_name
+  location                      = var.location
+  resource_group_name           = var.resource_group_name
+  disable_bgp_route_propagation = var.disable_bgp_route_propagation
+  tags                          = var.tags
+}
+
+# Create routes associated to the Route Table
+resource "azurerm_route" "route" {
+  for_each               = { for idx, route in var.routes : idx => route }
+  name                   = each.value.name
+  resource_group_name    = azurerm_route_table.route_table.resource_group_name
+  route_table_name       = azurerm_route_table.route_table.name
+  address_prefix         = each.value.address_prefix
+  next_hop_type          = each.value.next_hop_type
+  next_hop_in_ip_address = each.value.next_hop_in_ip_address
 }
 
 # required AVM resources interfaces
