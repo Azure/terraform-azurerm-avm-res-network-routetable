@@ -19,11 +19,6 @@ variable "name" {
 
 variable "resource_group_name" {
   type        = string
-  description = "The resource group where the resources will be deployed."
-}
-
-variable "resource_group_name" {
-  type        = string
   description = "(Required) The name of the resource group in which to create the resource. Changing this forces a new resource to be created."
   nullable    = false
 }
@@ -81,20 +76,6 @@ variable "lock" {
   }
 }
 
-variable "lock" {
-  type = object({
-    name = optional(string, null)
-    kind = optional(string, "None")
-  })
-  default     = {}
-  description = "The lock name and level to apply to the Route Table. Default is `None`. Possible kind values are `None`, `CanNotDelete`, and `ReadOnly`."
-
-  validation {
-    condition     = contains(["None", "CanNotDelete", "ReadOnly"], var.lock.kind)
-    error_message = "lock.kind must be one of 'None', 'CanNotDelete', or 'ReadOnly'."
-  }
-}
-
 variable "role_assignments" {
   type = list(object({
     role_definition_id                     = optional(string, null)
@@ -126,31 +107,6 @@ variable "role_assignments" {
     for role in var.role_assignments : (role.role_definition_id == null && role.role_definition_name != null) || (role.role_definition_id != null && role.role_definition_name == null)])
     error_message = ""
   }
-}
-
-variable "role_assignments" {
-  type = map(object({
-    role_definition_id_or_name             = string
-    principal_id                           = string
-    description                            = optional(string, null)
-    skip_service_principal_aad_check       = optional(bool, false)
-    condition                              = optional(string, null)
-    condition_version                      = optional(string, null)
-    delegated_managed_identity_resource_id = optional(string, null)
-  }))
-  default     = {}
-  description = <<DESCRIPTION
-A map of role assignments to create on this resource. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
-
-- `role_definition_id_or_name` - The ID or name of the role definition to assign to the principal.
-- `principal_id` - The ID of the principal to assign the role to.
-- `description` - The description of the role assignment.
-- `skip_service_principal_aad_check` - If set to true, skips the Azure Active Directory check for the service principal in the tenant. Defaults to false.
-- `condition` - The condition which will be used to scope the role assignment.
-- `condition_version` - The version of the condition syntax. Valid values are '2.0'.
-
-> Note: only set `skip_service_principal_aad_check` to true if you are assigning a role to a service principal.
-DESCRIPTION
 }
 
 variable "routes" {
@@ -197,12 +153,6 @@ variable "subnets" {
     condition     = alltrue([for subnet in var.subnets : can(regex("/subscriptions/[a-f0-9-]+/resourceGroups/[a-zA-Z0-9_-]+/providers/Microsoft.Network/virtualNetworks/[a-zA-Z0-9_-]+/subnets/[a-zA-Z0-9_-]+", subnet))])
     error_message = "All elements in the list must be in the form of an Azure subnet resource id."
   }
-}
-
-variable "tags" {
-  type        = map(string)
-  default     = null
-  description = "(Optional) A mapping of tags to assign to the resource."
 }
 
 # tflint-ignore: terraform_unused_declarations
