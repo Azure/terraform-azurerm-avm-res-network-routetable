@@ -29,20 +29,29 @@ resource "azurerm_route" "this" {
   next_hop_in_ip_address = each.value.next_hop_in_ip_address
 }
 
-# required AVM resources interfaces
+# Associate route table with VNets
+resource "azurerm_subnet_route_table_association" "this" {
+  for_each = toset(var.subnets)
+
+  route_table_id = azurerm_route_table.route_table.id
+  subnet_id      = each.value
+}
+
+# Applying Management Lock to the Route Table if specified.
 resource "azurerm_management_lock" "this" {
   count = var.lock.kind != "None" ? 1 : 0
 
   lock_level = var.lock.kind
-  name       = coalesce(var.lock.name, "lock-${var.name}")
-  scope      = azurerm_resource_group.parent.id # TODO: Replace this dummy resource azurerm_resource_group.TODO with your module resource
+  name       = coalesce(var.lock.name, "lock-${var.route_table_name}")
+  scope      = azurerm_route_table.route_table.id
 }
 
+# Apply resource level IaM.
 resource "azurerm_role_assignment" "this" {
   for_each = var.role_assignments
 
   principal_id                           = each.value.principal_id
-  scope                                  = azurerm_resource_group.TODO.id # TODO: Replace this dummy resource azurerm_resource_group.TODO with your module resource
+  scope                                  = azurerm_route_table.this.id # TODO: Replace this dummy resource azurerm_resource_group.TODO with your module resource
   condition                              = each.value.condition
   condition_version                      = each.value.condition_version
   delegated_managed_identity_resource_id = each.value.delegated_managed_identity_resource_id

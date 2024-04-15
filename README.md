@@ -45,12 +45,11 @@ The following providers are used by this module:
 The following resources are used by this module:
 
 - [azurerm_management_lock.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_lock) (resource)
-- [azurerm_private_endpoint.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) (resource)
-- [azurerm_private_endpoint_application_security_group_association.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint_application_security_group_association) (resource)
 - [azurerm_resource_group_template_deployment.telemetry](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group_template_deployment) (resource)
 - [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
-- [azurerm_route.route](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/route) (resource)
-- [azurerm_route_table.route_table](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/route_table) (resource)
+- [azurerm_route.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/route) (resource)
+- [azurerm_route_table.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/route_table) (resource)
+- [azurerm_subnet_route_table_association.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet_route_table_association) (resource)
 - [random_id.telem](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) (resource)
 - [azurerm_resource_group.parent](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) (data source)
 
@@ -67,7 +66,13 @@ Type: `string`
 
 ### <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name)
 
-Description: The resource group where the resources will be deployed.
+Description: (Required) The name of the resource group in which to create the resource. Changing this forces a new resource to be created.
+
+Type: `string`
+
+### <a name="input_route_table_name"></a> [route\_table\_name](#input\_route\_table\_name)
+
+Description: (Required) Specifies the name of the Route Table. Changing this forces a new resource to be created.
 
 Type: `string`
 
@@ -75,10 +80,18 @@ Type: `string`
 
 The following input variables are optional (have default values):
 
+### <a name="input_disable_bgp_route_propagation"></a> [disable\_bgp\_route\_propagation](#input\_disable\_bgp\_route\_propagation)
+
+Description: (Optional) Boolean flag which controls propagation of routes learned by BGP on that route table. True means disable.
+
+Type: `bool`
+
+Default: `true`
+
 ### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
 
 Description: This variable controls whether or not telemetry is enabled for the module.  
-For more information see <https://aka.ms/avm/telemetryinfo>.  
+For more information see https://aka.ms/avm/telemetryinfo.  
 If it is set to false, then no telemetry will be collected.
 
 Type: `bool`
@@ -95,7 +108,7 @@ Default: `null`
 
 ### <a name="input_lock"></a> [lock](#input\_lock)
 
-Description: The lock level to apply. Default is `None`. Possible values are `None`, `CanNotDelete`, and `ReadOnly`.
+Description: The lock name and level to apply to the Route Table. Default is `None`. Possible kind values are `None`, `CanNotDelete`, and `ReadOnly`.
 
 Type:
 
@@ -136,6 +149,34 @@ map(object({
 ```
 
 Default: `{}`
+
+### <a name="input_routes"></a> [routes](#input\_routes)
+
+Description: - `name` - (Required) The name of the route.
+- `address_prefix` - (Required) The destination to which the route applies. Can be CIDR (such as 10.1.0.0/16) or Azure Service Tag (such as ApiManagement, AzureBackup or AzureMonitor) format.
+- `next_hop_type` - (Required) The type of Azure hop the packet should be sent to. Possible values are VirtualNetworkGateway, VnetLocal, Internet, VirtualAppliance and None.
+- `next_hop_in_ip_address` - (Optional) Contains the IP address packets should be forwarded to. Next hop values are only allowed in routes where the next hop type is VirtualAppliance
+
+Type:
+
+```hcl
+list(object({
+    name                   = string
+    address_prefix         = string
+    next_hop_type          = string
+    next_hop_in_ip_address = optional(string)
+  }))
+```
+
+Default: `null`
+
+### <a name="input_subnets"></a> [subnets](#input\_subnets)
+
+Description: - `subnets` - (Required) A list of subnet ID's to associate the route table to.
+
+Type: `list(string)`
+
+Default: `null`
 
 ### <a name="input_tags"></a> [tags](#input\_tags)
 
