@@ -16,7 +16,6 @@ variable "resource_group_name" {
   description = "The resource group where the resources will be deployed."
 }
 
-
 variable "enable_telemetry" {
   type        = bool
   default     = true
@@ -47,7 +46,6 @@ variable "lock" {
     error_message = "The lock level must be one of: 'None', 'CanNotDelete', or 'ReadOnly'."
   }
 }
-
 
 variable "role_assignments" {
   type = map(object({
