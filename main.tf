@@ -7,18 +7,19 @@ data "azurerm_resource_group" "parent" {
 # Create Route Table
 resource "azurerm_route_table" "this" {
   location                      = var.location
-  name                          = var.route_table_name
+  name                          = var.name
   resource_group_name           = var.resource_group_name
   disable_bgp_route_propagation = var.disable_bgp_route_propagation
   tags                          = var.tags
 }
+
 
 # Create routes associated to the Route Table
 resource "azurerm_route" "this" {
   for_each = { for idx, route in var.routes : idx => route }
 
   address_prefix         = each.value.address_prefix
-  name                   = each.value.name
+  name                   = startsWith(each.value.name, "udr-") ? each.value.name : "udr-" + each.value.name
   next_hop_type          = each.value.next_hop_type
   resource_group_name    = azurerm_route_table.route_table.resource_group_name
   route_table_name       = azurerm_route_table.route_table.name
@@ -38,7 +39,7 @@ resource "azurerm_management_lock" "this" {
   count = var.lock.kind != "None" ? 1 : 0
 
   lock_level = var.lock.kind
-  name       = coalesce(var.lock.name, "lock-${var.route_table_name}")
+  name       = coalesce(var.lock.name, "lock-${var.name}")
   scope      = azurerm_route_table.route_table.id
 }
 

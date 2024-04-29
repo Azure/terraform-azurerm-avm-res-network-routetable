@@ -51,8 +51,42 @@ resource "azurerm_resource_group" "this" {
 module "test" {
   source = "../../"
   # source             = "Azure/avm-<res/ptn>-<name>/azurerm"
-  # ...
   enable_telemetry    = var.enable_telemetry # see variables.tf
   name                = module.naming.route_table.name_unique
   resource_group_name = azurerm_resource_group.this.name
+
+  routes = [
+    {
+      name           = "test_name0"
+      address_prefix = "10.2.0.0/32"
+      next_hop_type  = "VnetLocal"
+    },
+    {
+      name                   = "test_name1"
+      address_prefix         = "10.1.0.0/24"
+      next_hop_type          = "VirtualAppliance"
+      next_hop_in_ip_address = "10.0.0.1"
+    },
+    {
+      name           = "test_name2"
+      address_prefix = "10.1.0.0/16"
+      next_hop_type  = "VnetLocal"
+    },
+    {
+      name           = "test_name3"
+      address_prefix = "10.0.0.0/8"
+      next_hop_type  = "VirtualNetworkGateway"
+    },
+    {
+      name           = "test_name4"
+      address_prefix = "0.0.0.0/0"
+      next_hop_type  = "Internet"
+    }
+  ]
+
+  subnets = [
+    "/subscriptions/7d91561b-788f-465e-81aa-39409f1f6b3a/resourceGroups/test_rg/providers/Microsoft.Network/virtualNetworks/assoc_vnet/subnets/default",
+    "/subscriptions/7d91561b-788f-465e-81aa-39409f1f6b3a/resourceGroups/test_rg/providers/Microsoft.Network/virtualNetworks/assoc_vnet/subnets/default2"
+  ]
 }
+

@@ -1,31 +1,12 @@
-variable "location" {
-  type        = string
-  description = "(Required) Specifies the supported Azure location where the resource exists. Changing this forces a new resource to be created."
-  nullable    = false
-}
-
 variable "name" {
   type        = string
   description = "(Required) Specifies the name of the Route Table. Changing this forces a new resource to be created."
   nullable    = false
-
-  validation {
-    condition     = can(regex("TODO", var.name))
-    error_message = "The name must be TODO." # TODO remove the example below once complete:
-    #condition     = can(regex("^[a-z0-9]{5,50}$", var.name))
-    #error_message = "The name must be between 5 and 50 characters long and can only contain lowercase letters and numbers."
-  }
 }
 
 variable "resource_group_name" {
   type        = string
   description = "(Required) The name of the resource group in which to create the resource. Changing this forces a new resource to be created."
-  nullable    = false
-}
-
-variable "route_table_name" {
-  type        = string
-  description = "(Required) Specifies the name of the Route Table. Changing this forces a new resource to be created."
   nullable    = false
 }
 
@@ -41,16 +22,6 @@ variable "enable_telemetry" {
   description = <<DESCRIPTION
 This variable controls whether or not telemetry is enabled for the module.
 For more information see <https://aka.ms/avm/telemetryinfo>.
-If it is set to false, then no telemetry will be collected.
-DESCRIPTION
-}
-
-variable "enable_telemetry" {
-  type        = bool
-  default     = true
-  description = <<DESCRIPTION
-This variable controls whether or not telemetry is enabled for the module.
-For more information see https://aka.ms/avm/telemetryinfo.
 If it is set to false, then no telemetry will be collected.
 DESCRIPTION
 }
