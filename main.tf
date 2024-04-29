@@ -21,8 +21,8 @@ resource "azurerm_route" "this" {
   address_prefix         = each.value.address_prefix
   name                   = startsWith(each.value.name, "udr-") ? each.value.name : "udr-" + each.value.name
   next_hop_type          = each.value.next_hop_type
-  resource_group_name    = azurerm_route_table.route_table.resource_group_name
-  route_table_name       = azurerm_route_table.route_table.name
+  resource_group_name    = azurerm_route_table.this.resource_group_name
+  route_table_name       = azurerm_route_table.this.name
   next_hop_in_ip_address = each.value.next_hop_in_ip_address
 }
 
@@ -30,7 +30,7 @@ resource "azurerm_route" "this" {
 resource "azurerm_subnet_route_table_association" "this" {
   for_each = toset(var.subnets)
 
-  route_table_id = azurerm_route_table.route_table.id
+  route_table_id = azurerm_route_table.this.id
   subnet_id      = each.value
 }
 
@@ -40,7 +40,7 @@ resource "azurerm_management_lock" "this" {
 
   lock_level = var.lock.kind
   name       = coalesce(var.lock.name, "lock-${var.name}")
-  scope      = azurerm_route_table.route_table.id
+  scope      = azurerm_route_table.this.id
 }
 
 # Apply resource level IaM.

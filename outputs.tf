@@ -12,6 +12,6 @@ output "routes" {
   description = "This is the full output for the routes."
   value = zipmap(
     [for route in var.routes : route.name],
-    values(azurerm_route.route)[*]
+    values(azurerm_route.this)[*]
   )
 }
