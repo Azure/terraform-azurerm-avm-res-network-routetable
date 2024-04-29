@@ -1,11 +1,11 @@
 output "route_table" {
   description = "This is the full output for the route table."
-  value       = resource.azurerm_route_table.route_table
+  value       = resource.azurerm_route_table.this
 }
 
 output "route_table_resource_id" {
   description = "The ID of the route table"
-  value       = resource.azurerm_route_table.route_table.id
+  value       = resource.azurerm_route_table.this.id
 }
 
 output "routes" {
