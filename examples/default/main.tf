@@ -44,15 +44,9 @@ resource "azurerm_resource_group" "this" {
   name     = module.naming.resource_group.name_unique
 }
 
-# This is the module call
-# Do not specify location here due to the randomization above.
-# Leaving location as `null` will cause the module to use the resource group location
-# with a data source.
-module "test" {
-  source = "../../"
-  # source             = "Azure/avm-<res/ptn>-<name>/azurerm"
-  # ...
-  enable_telemetry    = var.enable_telemetry # see variables.tf
+module "test-route-table" {
+  source              = "../../"
+  enable_telemetry    = var.enable_telemetry
   name                = module.naming.route_table.name_unique
   resource_group_name = azurerm_resource_group.this.name
 }

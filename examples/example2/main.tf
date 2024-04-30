@@ -60,7 +60,7 @@ resource "azurerm_subnet" "this" {
   virtual_network_name = azurerm_virtual_network.this.name
 }
 
-module "test" {
+module "test-route-table" {
   source              = "../../"
   enable_telemetry    = var.enable_telemetry
   name                = module.naming.route_table.name_unique
@@ -99,5 +99,12 @@ module "test" {
     azurerm_subnet.this[0].id,
     azurerm_subnet.this[1].id
   ]
+
+  lock = {
+    kind = "CanNotDelete"
+    name = "Example-Lock"
+  }
 }
+
+
 

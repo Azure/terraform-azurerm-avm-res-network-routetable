@@ -2,6 +2,7 @@
 # Default example
 
 This deploys the module in its simplest form.
+The Route Table is created in a resource group without any other parameters.
 
 ```hcl
 terraform {
@@ -50,15 +51,9 @@ resource "azurerm_resource_group" "this" {
   name     = module.naming.resource_group.name_unique
 }
 
-# This is the module call
-# Do not specify location here due to the randomization above.
-# Leaving location as `null` will cause the module to use the resource group location
-# with a data source.
-module "test" {
-  source = "../../"
-  # source             = "Azure/avm-<res/ptn>-<name>/azurerm"
-  # ...
-  enable_telemetry    = var.enable_telemetry # see variables.tf
+module "test-route-table" {
+  source              = "../../"
+  enable_telemetry    = var.enable_telemetry
   name                = module.naming.route_table.name_unique
   resource_group_name = azurerm_resource_group.this.name
 }
@@ -129,7 +124,7 @@ Source: Azure/regions/azurerm
 
 Version: >= 0.3.0
 
-### <a name="module_test"></a> [test](#module\_test)
+### <a name="module_test-route-table"></a> [test-route-table](#module\_test-route-table)
 
 Source: ../../
 

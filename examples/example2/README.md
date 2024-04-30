@@ -1,7 +1,11 @@
 <!-- BEGIN_TF_DOCS -->
-# Default example
+# Useful example
 
-This deploys the module in its simplest form.
+This example deployed a routing table with all the dependecies required for full functionality:
+1. Route table
+2. User Defined Routes of each type.
+3. Association with multiple subnets.
+4. Lock
 
 ```hcl
 terraform {
@@ -66,7 +70,7 @@ resource "azurerm_subnet" "this" {
   virtual_network_name = azurerm_virtual_network.this.name
 }
 
-module "test" {
+module "test-route-table" {
   source              = "../../"
   enable_telemetry    = var.enable_telemetry
   name                = module.naming.route_table.name_unique
@@ -105,7 +109,14 @@ module "test" {
     azurerm_subnet.this[0].id,
     azurerm_subnet.this[1].id
   ]
+
+  lock = {
+    kind = "CanNotDelete"
+    name = "Example-Lock"
+  }
 }
+
+
 
 ```
 
@@ -176,7 +187,7 @@ Source: Azure/regions/azurerm
 
 Version: >= 0.3.0
 
-### <a name="module_test"></a> [test](#module\_test)
+### <a name="module_test-route-table"></a> [test-route-table](#module\_test-route-table)
 
 Source: ../../
 
