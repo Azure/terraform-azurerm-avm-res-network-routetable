@@ -19,7 +19,7 @@ resource "azurerm_route" "this" {
   for_each = { for idx, route in var.routes : idx => route }
 
   address_prefix         = each.value.address_prefix
-  name                   = startsWith(each.value.name, "udr-") ? each.value.name : "udr-" + each.value.name
+  name                   = startswith(each.value.name, "udr-") ? each.value.name : "udr-" + each.value.name
   next_hop_type          = each.value.next_hop_type
   resource_group_name    = azurerm_route_table.this.resource_group_name
   route_table_name       = azurerm_route_table.this.name

@@ -48,9 +48,8 @@ variable "lock" {
 }
 
 variable "role_assignments" {
-  type = list(object({
-    role_definition_id                     = optional(string, null)
-    role_definition_name                   = optional(string, null)
+  type = map(object({
+    role_definition_id_or_name             = string
     principal_id                           = string
     description                            = optional(string, null)
     skip_service_principal_aad_check       = optional(bool, false)
@@ -58,26 +57,20 @@ variable "role_assignments" {
     condition_version                      = optional(string, null)
     delegated_managed_identity_resource_id = optional(string, null)
   }))
-  default     = []
+  default     = {}
   description = <<DESCRIPTION
-  A map of role assignments to create on the Route Table. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
-  
-  - `role_definition_id_or_name` - (Required) The Scoped-ID of the Role Definition or the name of a built-in Role. Changing this forces a new resource to be created.
-  - `principal_id` - (Required) The ID of the Principal (User, Group or Service Principal) to assign the Role Definition to. Changing this forces a new resource to be created.
-  - `principal_type` - (Optional) The type of the principal_id. Possible values are User, Group and ServicePrincipal. Changing this forces a new resource to be created.
-  - `description` - (Optional) The description for this Role Assignment. Changing this forces a new resource to be created.
-  - `skip_service_principal_aad_check` - (Optional) If the principal_id is a newly provisioned Service Principal set this value to true to skip the Azure Active Directory check which may fail due to replication lag. This argument is only valid if the principal_id is a Service Principal identity. Defaults to false.
-  - `condition` - (Optional) The condition that limits the resources that the role can be assigned to. Changing this forces a new resource to be created.
-  - `condition_version` - (Optional) The version of the condition. Possible values are 1.0 or 2.0. Changing this forces a new resource to be created.
-  
-  > Note: only set `skip_service_principal_aad_check` to true if you are assigning a role to a service principal.
-  DESCRIPTION
+A map of role assignments to create on this resource. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
 
-  validation {
-    condition = alltrue([
-    for role in var.role_assignments : (role.role_definition_id == null && role.role_definition_name != null) || (role.role_definition_id != null && role.role_definition_name == null)])
-    error_message = ""
-  }
+- `role_definition_id_or_name` - The ID or name of the role definition to assign to the principal.
+- `principal_id` - The ID of the principal to assign the role to.
+- `description` - The description of the role assignment.
+- `skip_service_principal_aad_check` - If set to true, skips the Azure Active Directory check for the service principal in the tenant. Defaults to false.
+- `condition` - The condition which will be used to scope the role assignment.
+- `condition_version` - The version of the condition syntax. Valid values are '2.0'.
+
+> Note: only set `skip_service_principal_aad_check` to true if you are assigning a role to a service principal.
+DESCRIPTION
+  nullable    = false
 }
 
 variable "routes" {

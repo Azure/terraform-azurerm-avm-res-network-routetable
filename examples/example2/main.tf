@@ -44,6 +44,21 @@ resource "azurerm_resource_group" "this" {
   name     = module.naming.resource_group.name_unique
 }
 
+resource "azurerm_virtual_network" "this" {
+  location                = azurerm_resource_group.this.location
+  name                    = module.naming.virtual_network.name
+  resource_group_name     = azurerm_resource_group.this.name
+  address_space           = ["10.0.0.0/16"]
+}
+
+resource "azurerm_subnet" "this" {
+  count                   = 2
+  name                    = module.naming.subnet.name[count.index]
+  resource_group_name     = azurerm_resource_group.this.name
+  virtual_network_name    = azurerm_virtual_network.this.name
+  address_prefixes        = ["10.0.${count.index}.0/24"]
+}
+
 # This is the module call
 # Do not specify location here due to the randomization above.
 # Leaving location as `null` will cause the module to use the resource group location
@@ -85,8 +100,8 @@ module "test" {
   ]
 
   subnets = [
-    "/subscriptions/7d91561b-788f-465e-81aa-39409f1f6b3a/resourceGroups/test_rg/providers/Microsoft.Network/virtualNetworks/assoc_vnet/subnets/default",
-    "/subscriptions/7d91561b-788f-465e-81aa-39409f1f6b3a/resourceGroups/test_rg/providers/Microsoft.Network/virtualNetworks/assoc_vnet/subnets/default2"
+    azurerm_subnet.this[0].id,
+    azurerm_subnet.this[1].id
   ]
 }
 
