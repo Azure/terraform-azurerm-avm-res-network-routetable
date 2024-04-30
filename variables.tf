@@ -80,7 +80,7 @@ variable "routes" {
     next_hop_type          = string
     next_hop_in_ip_address = optional(string)
   }))
-  default     = null
+  default     = []
   description = <<-EOT
  - `name` - (Required) The name of the route.
  - `address_prefix` - (Required) The destination to which the route applies. Can be CIDR (such as 10.1.0.0/16) or Azure Service Tag (such as ApiManagement, AzureBackup or AzureMonitor) format.
@@ -108,7 +108,7 @@ variable "routes" {
 
 variable "subnets" {
   type        = list(string)
-  default     = null
+  default     = []
   description = <<-EOT
  - `subnets` - (Required) A list of subnet ID's to associate the route table to.
   EOT
