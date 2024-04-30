@@ -26,7 +26,7 @@ resource "azurerm_route" "this" {
 
 # Associate route table with VNets
 resource "azurerm_subnet_route_table_association" "this" {
-  for_each = toset(var.subnets)
+  for_each = { for idx, subnet in var.subnets : idx => subnet }
 
   route_table_id = azurerm_route_table.this.id
   subnet_id      = each.value

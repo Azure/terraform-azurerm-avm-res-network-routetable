@@ -60,41 +60,36 @@ resource "azurerm_subnet" "this" {
   virtual_network_name = azurerm_virtual_network.this.name
 }
 
-# This is the module call
-# Do not specify location here due to the randomization above.
-# Leaving location as `null` will cause the module to use the resource group location
-# with a data source.
 module "test" {
-  source = "../../"
-  # source             = "Azure/avm-<res/ptn>-<name>/azurerm"
-  enable_telemetry    = var.enable_telemetry # see variables.tf
+  source              = "../../"
+  enable_telemetry    = var.enable_telemetry
   name                = module.naming.route_table.name_unique
   resource_group_name = azurerm_resource_group.this.name
 
   routes = [
     {
-      name           = "test_name0"
+      name           = "test-route-vnetlocal"
       address_prefix = "10.2.0.0/32"
       next_hop_type  = "VnetLocal"
     },
     {
-      name                   = "test_name1"
+      name                   = "test-route-nva"
       address_prefix         = "10.1.0.0/24"
       next_hop_type          = "VirtualAppliance"
       next_hop_in_ip_address = "10.0.0.1"
     },
     {
-      name           = "test_name2"
+      name           = "test-route-vnetlocal2"
       address_prefix = "10.1.0.0/16"
       next_hop_type  = "VnetLocal"
     },
     {
-      name           = "test_name3"
+      name           = "test-route-vnetgateway"
       address_prefix = "10.0.0.0/8"
       next_hop_type  = "VirtualNetworkGateway"
     },
     {
-      name           = "test_name4"
+      name           = "test-route-internet"
       address_prefix = "0.0.0.0/0"
       next_hop_type  = "Internet"
     }
