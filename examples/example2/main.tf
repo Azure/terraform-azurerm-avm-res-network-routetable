@@ -47,7 +47,7 @@ resource "azurerm_resource_group" "this" {
 resource "azurerm_virtual_network" "this" {
   address_space       = ["10.0.0.0/16"]
   location            = azurerm_resource_group.this.location
-  name                = module.naming.virtual_network.name
+  name                = module.naming.virtual_network.name_unique
   resource_group_name = azurerm_resource_group.this.name
 }
 
@@ -55,7 +55,7 @@ resource "azurerm_subnet" "this" {
   count = 2
 
   address_prefixes     = ["10.0.${count.index}.0/24"]
-  name                 = module.naming.subnet.name[count.index]
+  name                 = format("%s%d", module.naming.subnet.name_unique, count.index)
   resource_group_name  = azurerm_resource_group.this.name
   virtual_network_name = azurerm_virtual_network.this.name
 }
