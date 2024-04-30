@@ -60,7 +60,7 @@ resource "azurerm_subnet" "this" {
   virtual_network_name = azurerm_virtual_network.this.name
 }
 
-module "test-route-table" {
+module "test_route_table" {
   source              = "../../"
   enable_telemetry    = var.enable_telemetry
   name                = module.naming.route_table.name_unique

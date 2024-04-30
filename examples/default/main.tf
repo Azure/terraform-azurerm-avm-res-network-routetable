@@ -44,7 +44,7 @@ resource "azurerm_resource_group" "this" {
   name     = module.naming.resource_group.name_unique
 }
 
-module "test-route-table" {
+module "test_route_table" {
   source              = "../../"
   enable_telemetry    = var.enable_telemetry
   name                = module.naming.route_table.name_unique
