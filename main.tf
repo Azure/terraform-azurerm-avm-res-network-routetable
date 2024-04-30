@@ -1,14 +1,12 @@
 data "azurerm_resource_group" "parent" {
-  count = var.location == null ? 1 : 0
-
   name = var.resource_group_name
 }
 
 # Create Route Table
 resource "azurerm_route_table" "this" {
-  location                      = var.location
+  location                      = data.azurerm_resource_group.parent.location
   name                          = var.name
-  resource_group_name           = var.resource_group_name
+  resource_group_name           = data.azurerm_resource_group.parent.name
   disable_bgp_route_propagation = var.disable_bgp_route_propagation
   tags                          = var.tags
 }
@@ -19,9 +17,9 @@ resource "azurerm_route" "this" {
   for_each = { for idx, route in var.routes : idx => route }
 
   address_prefix         = each.value.address_prefix
-  name                   = startswith(each.value.name, "udr-") ? each.value.name : "udr-" + each.value.name
+  name                   = each.value.name
   next_hop_type          = each.value.next_hop_type
-  resource_group_name    = azurerm_route_table.this.resource_group_name
+  resource_group_name    = data.azurerm_resource_group.parent.name
   route_table_name       = azurerm_route_table.this.name
   next_hop_in_ip_address = each.value.next_hop_in_ip_address
 }
@@ -36,11 +34,12 @@ resource "azurerm_subnet_route_table_association" "this" {
 
 # Applying Management Lock to the Route Table if specified.
 resource "azurerm_management_lock" "this" {
-  count = var.lock.kind != "None" ? 1 : 0
+  count = var.lock != null ? 1 : 0
 
   lock_level = var.lock.kind
-  name       = coalesce(var.lock.name, "lock-${var.name}")
-  scope      = azurerm_route_table.this.id
+  name       = coalesce(var.lock.name, "lock-${var.lock.kind}")
+  scope      = azurerm_private_dns_resolver.this.id
+  notes      = var.lock.kind == "CanNotDelete" ? "Cannot delete the resource or its child resources." : "Cannot delete or modify the resource or its child resources."
 }
 
 # Apply resource level IaM.
