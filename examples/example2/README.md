@@ -70,7 +70,7 @@ resource "azurerm_subnet" "this" {
   virtual_network_name = azurerm_virtual_network.this.name
 }
 
-module "test-route-table" {
+module "test_route_table" {
   source              = "../../"
   enable_telemetry    = var.enable_telemetry
   name                = module.naming.route_table.name_unique
@@ -187,7 +187,7 @@ Source: Azure/regions/azurerm
 
 Version: >= 0.3.0
 
-### <a name="module_test-route-table"></a> [test-route-table](#module\_test-route-table)
+### <a name="module_test_route_table"></a> [test\_route\_table](#module\_test\_route\_table)
 
 Source: ../../
 
