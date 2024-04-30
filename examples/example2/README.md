@@ -50,6 +50,22 @@ resource "azurerm_resource_group" "this" {
   name     = module.naming.resource_group.name_unique
 }
 
+resource "azurerm_virtual_network" "this" {
+  address_space       = ["10.0.0.0/16"]
+  location            = azurerm_resource_group.this.location
+  name                = module.naming.virtual_network.name
+  resource_group_name = azurerm_resource_group.this.name
+}
+
+resource "azurerm_subnet" "this" {
+  count = 2
+
+  address_prefixes     = ["10.0.${count.index}.0/24"]
+  name                 = module.naming.subnet.name[count.index]
+  resource_group_name  = azurerm_resource_group.this.name
+  virtual_network_name = azurerm_virtual_network.this.name
+}
+
 # This is the module call
 # Do not specify location here due to the randomization above.
 # Leaving location as `null` will cause the module to use the resource group location
@@ -91,8 +107,8 @@ module "test" {
   ]
 
   subnets = [
-    "/subscriptions/7d91561b-788f-465e-81aa-39409f1f6b3a/resourceGroups/test_rg/providers/Microsoft.Network/virtualNetworks/assoc_vnet/subnets/default",
-    "/subscriptions/7d91561b-788f-465e-81aa-39409f1f6b3a/resourceGroups/test_rg/providers/Microsoft.Network/virtualNetworks/assoc_vnet/subnets/default2"
+    azurerm_subnet.this[0].id,
+    azurerm_subnet.this[1].id
   ]
 }
 
@@ -122,6 +138,8 @@ The following providers are used by this module:
 The following resources are used by this module:
 
 - [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) (resource)
+- [azurerm_subnet.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) (resource)
+- [azurerm_virtual_network.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) (resource)
 - [random_integer.region_index](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/integer) (resource)
 
 <!-- markdownlint-disable MD013 -->

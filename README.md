@@ -117,24 +117,22 @@ Default: `{}`
 
 ### <a name="input_role_assignments"></a> [role\_assignments](#input\_role\_assignments)
 
-Description:   A map of role assignments to create on the Route Table. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
+Description: A map of role assignments to create on this resource. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
 
-  - `role_definition_id_or_name` - (Required) The Scoped-ID of the Role Definition or the name of a built-in Role. Changing this forces a new resource to be created.
-  - `principal_id` - (Required) The ID of the Principal (User, Group or Service Principal) to assign the Role Definition to. Changing this forces a new resource to be created.
-  - `principal_type` - (Optional) The type of the principal\_id. Possible values are User, Group and ServicePrincipal. Changing this forces a new resource to be created.
-  - `description` - (Optional) The description for this Role Assignment. Changing this forces a new resource to be created.
-  - `skip_service_principal_aad_check` - (Optional) If the principal\_id is a newly provisioned Service Principal set this value to true to skip the Azure Active Directory check which may fail due to replication lag. This argument is only valid if the principal\_id is a Service Principal identity. Defaults to false.
-  - `condition` - (Optional) The condition that limits the resources that the role can be assigned to. Changing this forces a new resource to be created.
-  - `condition_version` - (Optional) The version of the condition. Possible values are 1.0 or 2.0. Changing this forces a new resource to be created.
+- `role_definition_id_or_name` - The ID or name of the role definition to assign to the principal.
+- `principal_id` - The ID of the principal to assign the role to.
+- `description` - The description of the role assignment.
+- `skip_service_principal_aad_check` - If set to true, skips the Azure Active Directory check for the service principal in the tenant. Defaults to false.
+- `condition` - The condition which will be used to scope the role assignment.
+- `condition_version` - The version of the condition syntax. Valid values are '2.0'.
 
-  > Note: only set `skip_service_principal_aad_check` to true if you are assigning a role to a service principal.
+> Note: only set `skip_service_principal_aad_check` to true if you are assigning a role to a service principal.
 
 Type:
 
 ```hcl
-list(object({
-    role_definition_id                     = optional(string, null)
-    role_definition_name                   = optional(string, null)
+map(object({
+    role_definition_id_or_name             = string
     principal_id                           = string
     description                            = optional(string, null)
     skip_service_principal_aad_check       = optional(bool, false)
@@ -144,7 +142,7 @@ list(object({
   }))
 ```
 
-Default: `[]`
+Default: `{}`
 
 ### <a name="input_routes"></a> [routes](#input\_routes)
 
