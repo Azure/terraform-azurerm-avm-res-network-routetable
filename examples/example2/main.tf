@@ -95,7 +95,7 @@ module "test_route_table" {
     }
   ]
 
-  subnets = [
+  subnet_resource_ids = [
     azurerm_subnet.this[0].id,
     azurerm_subnet.this[1].id
   ]

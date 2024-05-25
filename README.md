@@ -140,10 +140,22 @@ Default: `{}`
 
 ### <a name="input_routes"></a> [routes](#input\_routes)
 
-Description: - `name` - (Required) The name of the route.
-- `address_prefix` - (Required) The destination to which the route applies. Can be CIDR (such as 10.1.0.0/16) or Azure Service Tag (such as ApiManagement, AzureBackup or AzureMonitor) format.
-- `next_hop_type` - (Required) The type of Azure hop the packet should be sent to. Possible values are VirtualNetworkGateway, VnetLocal, Internet, VirtualAppliance and None.
-- `next_hop_in_ip_address` - (Optional) Contains the IP address packets should be forwarded to. Next hop values are only allowed in routes where the next hop type is VirtualAppliance
+Description:  - `name` - (Required) The name of the route.
+ - `address_prefix` - (Required) The destination to which the route applies. Can be CIDR (such as 10.1.0.0/16) or Azure Service Tag (such as ApiManagement, AzureBackup or AzureMonitor) format.
+ - `next_hop_type` - (Required) The type of Azure hop the packet should be sent to. Possible values are VirtualNetworkGateway, VnetLocal, Internet, VirtualAppliance and None.
+ - `next_hop_in_ip_address` - (Optional) Contains the IP address packets should be forwarded to. Next hop values are only allowed in routes where the next hop type is VirtualAppliance
+
+ Example Input:
+
+```terraform
+routes = [
+    {
+      name           = "test-route-vnetlocal"
+      address_prefix = "10.2.0.0/32"
+      next_hop_type  = "VnetLocal"
+    }
+]
+```
 
 Type:
 
@@ -158,9 +170,18 @@ list(object({
 
 Default: `[]`
 
-### <a name="input_subnets"></a> [subnets](#input\_subnets)
+### <a name="input_subnet_resource_ids"></a> [subnet\_resource\_ids](#input\_subnet\_resource\_ids)
 
-Description: - `subnets` - (Required) A list of subnet ID's to associate the route table to.
+Description:  - `subnets` - (Required) A list of subnet ID's to associate the route table to.   
+ Each entry in the list must be supplied in the form of an Azure resource ID: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}
+
+```terraform
+subnet_resource_ids = [
+    azurerm_subnet.this.id,
+    /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}
+  ]
+]
+```
 
 Type: `list(string)`
 
@@ -178,6 +199,10 @@ Default: `null`
 
 The following outputs are exported:
 
+### <a name="output_name"></a> [name](#output\_name)
+
+Description: The route table name
+
 ### <a name="output_resource"></a> [resource](#output\_resource)
 
 Description: This is the full output for the route table.
@@ -188,7 +213,7 @@ Description: The ID of the route table
 
 ### <a name="output_routes"></a> [routes](#output\_routes)
 
-Description: This is the full output for the routes.
+Description: This is the full output of the routes.
 
 ## Modules
 
