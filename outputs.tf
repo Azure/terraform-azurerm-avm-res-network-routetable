@@ -1,9 +1,9 @@
-output "route_table" {
+output "resource" {
   description = "This is the full output for the route table."
   value       = resource.azurerm_route_table.this
 }
 
-output "route_table_resource_id" {
+output "resource_id" {
   description = "The ID of the route table"
   value       = resource.azurerm_route_table.this.id
 }

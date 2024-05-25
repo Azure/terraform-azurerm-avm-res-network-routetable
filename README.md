@@ -132,6 +132,7 @@ map(object({
     condition                              = optional(string, null)
     condition_version                      = optional(string, null)
     delegated_managed_identity_resource_id = optional(string, null)
+    principal_type                         = optional(string, null)
   }))
 ```
 
@@ -177,11 +178,11 @@ Default: `null`
 
 The following outputs are exported:
 
-### <a name="output_route_table"></a> [route\_table](#output\_route\_table)
+### <a name="output_resource"></a> [resource](#output\_resource)
 
 Description: This is the full output for the route table.
 
-### <a name="output_route_table_resource_id"></a> [route\_table\_resource\_id](#output\_route\_table\_resource\_id)
+### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
 
 Description: The ID of the route table
 
