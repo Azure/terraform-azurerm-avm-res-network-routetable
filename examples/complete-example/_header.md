@@ -1,4 +1,4 @@
-# Useful example
+# Complete example
 
 This example deployed a routing table with all the dependecies required for full functionality:
 1. Route table

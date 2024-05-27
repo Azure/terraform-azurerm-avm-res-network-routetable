@@ -109,10 +109,6 @@ routes = [
     error_message = "next_hop_type must be one of 'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance' or 'None' for all routes."
   }
   validation {
-    condition     = alltrue([for route in var.routes : route.next_hop_type == "VirtualAppliance" ? can(cidrnetmask("${route.next_hop_in_ip_address}/32")) == true : true])
-    error_message = "The value of next_hop_in_ip_address must be a valid IP address for routes with next_hop_type 'VirtualAppliance', and must not be in cidr notaion."
-  }
-  validation {
     condition     = alltrue([for route in var.routes : route.next_hop_type != "VirtualAppliance" ? route.next_hop_in_ip_address == null : true])
     error_message = "If next_hop_type is not VirtualAppliance, next_hop_in_ip_address must be null."
   }
