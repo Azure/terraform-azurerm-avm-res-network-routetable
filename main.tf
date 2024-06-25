@@ -4,7 +4,7 @@ data "azurerm_resource_group" "parent" {
 
 # Create Route Table
 resource "azurerm_route_table" "this" {
-  location                      = local.location
+  location                      = var.location
   name                          = var.name
   resource_group_name           = data.azurerm_resource_group.parent.name
   disable_bgp_route_propagation = var.disable_bgp_route_propagation

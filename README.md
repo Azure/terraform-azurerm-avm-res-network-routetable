@@ -54,6 +54,14 @@ The following resources are used by this module:
 
 The following input variables are required:
 
+### <a name="input_location"></a> [location](#input\_location)
+
+Description:     (Optional) Specifies the supported Azure location where the resource exists.   
+    When no location is specified, the parent resource group location is used.   
+    Changing this forces a new resource to be created.
+
+Type: `string`
+
 ### <a name="input_name"></a> [name](#input\_name)
 
 Description: (Required) Specifies the name of the Route Table. Changing this forces a new resource to be created.
@@ -87,16 +95,6 @@ Description:     (Optional) This variable controls whether or not telemetry is e
 Type: `bool`
 
 Default: `true`
-
-### <a name="input_location"></a> [location](#input\_location)
-
-Description:     (Optional) Specifies the supported Azure location where the resource exists.   
-    When no location is specified, the parent resource group location is used.   
-    Changing this forces a new resource to be created.
-
-Type: `string`
-
-Default: `null`
 
 ### <a name="input_lock"></a> [lock](#input\_lock)
 

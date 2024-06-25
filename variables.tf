@@ -1,3 +1,11 @@
+variable "location" {
+  type        = string
+  description = <<DESCRIPTION
+    (Required) Specifies the supported Azure location for the resource to be deployed. 
+    Changing this forces a new resource to be created.
+  DESCRIPTION
+}
+
 variable "name" {
   type        = string
   description = "(Required) Specifies the name of the Route Table. Changing this forces a new resource to be created."
@@ -23,16 +31,6 @@ variable "enable_telemetry" {
     (Optional) This variable controls whether or not telemetry is enabled for the module.
     For more information see <https://aka.ms/avm/telemetryinfo>.
     If it is set to false, then no telemetry will be collected.
-  DESCRIPTION
-}
-
-variable "location" {
-  type        = string
-  default     = null
-  description = <<DESCRIPTION
-    (Optional) Specifies the supported Azure location where the resource exists. 
-    When no location is specified, the parent resource group location is used. 
-    Changing this forces a new resource to be created.
   DESCRIPTION
 }
 

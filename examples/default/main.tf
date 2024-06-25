@@ -49,4 +49,5 @@ module "test_route_table" {
   enable_telemetry    = var.enable_telemetry
   name                = module.naming.route_table.name_unique
   resource_group_name = azurerm_resource_group.this.name
+  location            = azurerm_resource_group.this.location
 }
