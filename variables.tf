@@ -4,6 +4,7 @@ variable "location" {
     (Required) Specifies the supported Azure location for the resource to be deployed. 
     Changing this forces a new resource to be created.
   DESCRIPTION
+  nullable    = false
 }
 
 variable "name" {

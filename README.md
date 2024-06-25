@@ -56,8 +56,7 @@ The following input variables are required:
 
 ### <a name="input_location"></a> [location](#input\_location)
 
-Description:     (Optional) Specifies the supported Azure location where the resource exists.   
-    When no location is specified, the parent resource group location is used.   
+Description:     (Required) Specifies the supported Azure location for the resource to be deployed.   
     Changing this forces a new resource to be created.
 
 Type: `string`
