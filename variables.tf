@@ -20,10 +20,20 @@ variable "enable_telemetry" {
   type        = bool
   default     = true
   description = <<DESCRIPTION
-This variable controls whether or not telemetry is enabled for the module.
-For more information see <https://aka.ms/avm/telemetryinfo>.
-If it is set to false, then no telemetry will be collected.
-DESCRIPTION
+    (Optional) This variable controls whether or not telemetry is enabled for the module.
+    For more information see <https://aka.ms/avm/telemetryinfo>.
+    If it is set to false, then no telemetry will be collected.
+  DESCRIPTION
+}
+
+variable "location" {
+  type        = string
+  default     = null
+  description = <<DESCRIPTION
+    (Optional) Specifies the supported Azure location where the resource exists. 
+    When no location is specified, the parent resource group location is used. 
+    Changing this forces a new resource to be created.
+  DESCRIPTION
 }
 
 variable "lock" {
@@ -33,11 +43,11 @@ variable "lock" {
   })
   default     = null
   description = <<DESCRIPTION
-Controls the Resource Lock configuration for this resource. The following properties can be specified:
+    (Optional) Controls the Resource Lock configuration for this resource. The following properties can be specified:
 
-- `kind` - (Required) The type of lock. Possible values are `\"CanNotDelete\"` and `\"ReadOnly\"`.
-- `name` - (Optional) The name of the lock. If not specified, a name will be generated based on the `kind` value. Changing this forces the creation of a new resource.
-DESCRIPTION
+    - `kind` - (Required) The type of lock. Possible values are `\"CanNotDelete\"` and `\"ReadOnly\"`.
+    - `name` - (Optional) The name of the lock. If not specified, a name will be generated based on the `kind` value. Changing this forces the creation of a new resource.
+  DESCRIPTION
 
   validation {
     condition     = var.lock != null ? contains(["CanNotDelete", "ReadOnly"], var.lock.kind) : true
@@ -58,47 +68,48 @@ variable "role_assignments" {
   }))
   default     = {}
   description = <<DESCRIPTION
-A map of role assignments to create on this resource. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
+    (Optional) A map of role assignments to create on this resource. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
 
-- `role_definition_id_or_name` - The ID or name of the role definition to assign to the principal.
-- `principal_id` - The ID of the principal to assign the role to.
-- `description` - The description of the role assignment.
-- `skip_service_principal_aad_check` - If set to true, skips the Azure Active Directory check for the service principal in the tenant. Defaults to false.
-- `condition` - The condition which will be used to scope the role assignment.
-- `condition_version` - The version of the condition syntax. Valid values are '2.0'.
+    - `role_definition_id_or_name` - The ID or name of the role definition to assign to the principal.
+    - `principal_id` - The ID of the principal to assign the role to.
+    - `description` - The description of the role assignment.
+    - `skip_service_principal_aad_check` - If set to true, skips the Azure Active Directory check for the service principal in the tenant. Defaults to false.
+    - `condition` - The condition which will be used to scope the role assignment.
+    - `condition_version` - The version of the condition syntax. Valid values are '2.0'.
 
-> Note: only set `skip_service_principal_aad_check` to true if you are assigning a role to a service principal.
-DESCRIPTION
+    > Note: only set `skip_service_principal_aad_check` to true if you are assigning a role to a service principal.
+  DESCRIPTION
   nullable    = false
 }
 
 variable "routes" {
-  type = list(object({
+  type = map(object({
     name                   = string
     address_prefix         = string
     next_hop_type          = string
     next_hop_in_ip_address = optional(string)
   }))
-  default     = []
-  description = <<-EOT
- - `name` - (Required) The name of the route.
- - `address_prefix` - (Required) The destination to which the route applies. Can be CIDR (such as 10.1.0.0/16) or Azure Service Tag (such as ApiManagement, AzureBackup or AzureMonitor) format.
- - `next_hop_type` - (Required) The type of Azure hop the packet should be sent to. Possible values are VirtualNetworkGateway, VnetLocal, Internet, VirtualAppliance and None.
- - `next_hop_in_ip_address` - (Optional) Contains the IP address packets should be forwarded to. Next hop values are only allowed in routes where the next hop type is VirtualAppliance
+  default     = {}
+  description = <<DESCRIPTION
+    (Optional) A map of route objects to create on the route table. 
 
- Example Input:
+    - `name` - (Required) The name of the route.
+    - `address_prefix` - (Required) The destination to which the route applies. Can be CIDR (such as 10.1.0.0/16) or Azure Service Tag (such as ApiManagement, AzureBackup or AzureMonitor) format.
+    - `next_hop_type` - (Required) The type of Azure hop the packet should be sent to. Possible values are VirtualNetworkGateway, VnetLocal, Internet, VirtualAppliance and None.
+    - `next_hop_in_ip_address` - (Optional) Contains the IP address packets should be forwarded to. Next hop values are only allowed in routes where the next hop type is VirtualAppliance
 
-```terraform
-routes = [
-    {
-      name           = "test-route-vnetlocal"
-      address_prefix = "10.2.0.0/32"
-      next_hop_type  = "VnetLocal"
+    Example Input:
+
+    ```terraform
+    routes = {
+        route1 = {
+          name           = "test-route-vnetlocal"
+          address_prefix = "10.2.0.0/32"
+          next_hop_type  = "VnetLocal"
+        }
     }
-]
-```
-
-  EOT
+    ```
+  DESCRIPTION
 
   validation {
     condition     = length([for route in var.routes : route.name]) == length(distinct([for route in var.routes : route.name]))
@@ -115,20 +126,19 @@ routes = [
 }
 
 variable "subnet_resource_ids" {
-  type        = list(string)
-  default     = []
-  description = <<-EOT
- - `subnets` - (Required) A list of subnet ID's to associate the route table to. 
- Each entry in the list must be supplied in the form of an Azure resource ID: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}
+  type        = map(string)
+  default     = {}
+  description = <<DESCRIPTION
+    (Optional) A map of string subnet ID's to associate the route table to.
+    Each value in the map must be supplied in the form of an Azure resource ID: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}
 
-```terraform
-subnet_resource_ids = [
-    azurerm_subnet.this.id,
-    /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}
-  ]
-]
-```
-EOT
+    ```terraform
+    subnet_resource_ids = {
+        subnet1 = azurerm_subnet.this.id,
+        subnet2 = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}"
+    }
+    ```
+  DESCRIPTION
 
   validation {
     condition     = alltrue([for subnet in var.subnet_resource_ids : can(regex("/subscriptions/[a-f0-9-]+/resourceGroups/[a-zA-Z0-9_-]+/providers/Microsoft.Network/virtualNetworks/[a-zA-Z0-9_-]+/subnets/[a-zA-Z0-9_-]+", subnet))])

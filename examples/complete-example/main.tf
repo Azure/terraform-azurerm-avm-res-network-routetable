@@ -66,39 +66,39 @@ module "test_route_table" {
   name                = module.naming.route_table.name_unique
   resource_group_name = azurerm_resource_group.this.name
 
-  routes = [
-    {
+  routes = {
+    test-route-vnetlocal = {
       name           = "test-route-vnetlocal"
       address_prefix = "10.2.0.0/32"
       next_hop_type  = "VnetLocal"
     },
-    {
+    test-route-nva = {
       name                   = "test-route-nva"
       address_prefix         = "10.1.0.0/24"
       next_hop_type          = "VirtualAppliance"
       next_hop_in_ip_address = "10.0.0.1"
     },
-    {
+    test-route-vnetlocal2 = {
       name           = "test-route-vnetlocal2"
       address_prefix = "10.1.0.0/16"
       next_hop_type  = "VnetLocal"
     },
-    {
+    test-route-vnetgateway = {
       name           = "test-route-vnetgateway"
       address_prefix = "10.0.0.0/8"
       next_hop_type  = "VirtualNetworkGateway"
     },
-    {
+    test-route-internet = {
       name           = "test-route-internet"
       address_prefix = "0.0.0.0/0"
       next_hop_type  = "Internet"
     }
-  ]
+  }
 
-  subnet_resource_ids = [
-    azurerm_subnet.this[0].id,
-    azurerm_subnet.this[1].id
-  ]
+  subnet_resource_ids = {
+    subnet1 = azurerm_subnet.this[0].id,
+    subnet2 = azurerm_subnet.this[1].id
+  }
 
   lock = {
     kind = "CanNotDelete"

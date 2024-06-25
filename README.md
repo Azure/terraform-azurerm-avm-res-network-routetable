@@ -1,12 +1,10 @@
 <!-- BEGIN_TF_DOCS -->
 # terraform-azurerm-avm-res-network-routetable
 
-This is a module for deploying route table. It should be used to deploy the route tabe, routes, and connect them to a subnet.
+This is a module for deploying an Azure static route table. It should be used to deploy the route tabe, routes, and connect them to a subnet.
 
 > [!IMPORTANT]
-> As the overall AVM framework is not GA (generally available) yet - the CI framework and test automation is not fully functional and implemented across all supported languages yet - breaking changes are expected, and additional customer feedback is yet to be gathered and incorporated. Hence, modules **MUST NOT** be published at version `1.0.0` or higher at this time.
->
-> All module **MUST** be published as a pre-release version (e.g., `0.1.0`, `0.1.1`, `0.2.0`, etc.) until the AVM framework becomes GA.
+> As the overall AVM framework is not GA (generally available) yet - the CI framework and test automation is not fully functional and implemented across all supported languages yet - breaking changes are to be expected.
 >
 > However, it is important to note that this **DOES NOT** mean that the modules cannot be consumed and utilized. They **CAN** be leveraged in all types of environments (dev, test, prod etc.). Consumers can treat them just like any other IaC module and raise issues or feature requests against them as they learn from the usage of the module. Consumers should also read the release notes for each version, if considering updating to a more recent version of a module to see if there are any considerations or breaking changes etc.
 
@@ -82,20 +80,30 @@ Default: `true`
 
 ### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
 
-Description: This variable controls whether or not telemetry is enabled for the module.  
-For more information see <https://aka.ms/avm/telemetryinfo>.  
-If it is set to false, then no telemetry will be collected.
+Description:     (Optional) This variable controls whether or not telemetry is enabled for the module.  
+    For more information see <https://aka.ms/avm/telemetryinfo>.  
+    If it is set to false, then no telemetry will be collected.
 
 Type: `bool`
 
 Default: `true`
 
+### <a name="input_location"></a> [location](#input\_location)
+
+Description:     (Optional) Specifies the supported Azure location where the resource exists.   
+    When no location is specified, the parent resource group location is used.   
+    Changing this forces a new resource to be created.
+
+Type: `string`
+
+Default: `null`
+
 ### <a name="input_lock"></a> [lock](#input\_lock)
 
-Description: Controls the Resource Lock configuration for this resource. The following properties can be specified:
+Description:     (Optional) Controls the Resource Lock configuration for this resource. The following properties can be specified:
 
-- `kind` - (Required) The type of lock. Possible values are `\"CanNotDelete\"` and `\"ReadOnly\"`.
-- `name` - (Optional) The name of the lock. If not specified, a name will be generated based on the `kind` value. Changing this forces the creation of a new resource.
+    - `kind` - (Required) The type of lock. Possible values are `\"CanNotDelete\"` and `\"ReadOnly\"`.
+    - `name` - (Optional) The name of the lock. If not specified, a name will be generated based on the `kind` value. Changing this forces the creation of a new resource.
 
 Type:
 
@@ -110,16 +118,16 @@ Default: `null`
 
 ### <a name="input_role_assignments"></a> [role\_assignments](#input\_role\_assignments)
 
-Description: A map of role assignments to create on this resource. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
+Description:     (Optional) A map of role assignments to create on this resource. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
 
-- `role_definition_id_or_name` - The ID or name of the role definition to assign to the principal.
-- `principal_id` - The ID of the principal to assign the role to.
-- `description` - The description of the role assignment.
-- `skip_service_principal_aad_check` - If set to true, skips the Azure Active Directory check for the service principal in the tenant. Defaults to false.
-- `condition` - The condition which will be used to scope the role assignment.
-- `condition_version` - The version of the condition syntax. Valid values are '2.0'.
+    - `role_definition_id_or_name` - The ID or name of the role definition to assign to the principal.
+    - `principal_id` - The ID of the principal to assign the role to.
+    - `description` - The description of the role assignment.
+    - `skip_service_principal_aad_check` - If set to true, skips the Azure Active Directory check for the service principal in the tenant. Defaults to false.
+    - `condition` - The condition which will be used to scope the role assignment.
+    - `condition_version` - The version of the condition syntax. Valid values are '2.0'.
 
-> Note: only set `skip_service_principal_aad_check` to true if you are assigning a role to a service principal.
+    > Note: only set `skip_service_principal_aad_check` to true if you are assigning a role to a service principal.
 
 Type:
 
@@ -140,27 +148,30 @@ Default: `{}`
 
 ### <a name="input_routes"></a> [routes](#input\_routes)
 
-Description:  - `name` - (Required) The name of the route.
- - `address_prefix` - (Required) The destination to which the route applies. Can be CIDR (such as 10.1.0.0/16) or Azure Service Tag (such as ApiManagement, AzureBackup or AzureMonitor) format.
- - `next_hop_type` - (Required) The type of Azure hop the packet should be sent to. Possible values are VirtualNetworkGateway, VnetLocal, Internet, VirtualAppliance and None.
- - `next_hop_in_ip_address` - (Optional) Contains the IP address packets should be forwarded to. Next hop values are only allowed in routes where the next hop type is VirtualAppliance
+Description:     (Optional) A map of route objects to create on the route table.
 
- Example Input:
+    - `name` - (Required) The name of the route.
+    - `address_prefix` - (Required) The destination to which the route applies. Can be CIDR (such as 10.1.0.0/16) or Azure Service Tag (such as ApiManagement, AzureBackup or AzureMonitor) format.
+    - `next_hop_type` - (Required) The type of Azure hop the packet should be sent to. Possible values are VirtualNetworkGateway, VnetLocal, Internet, VirtualAppliance and None.
+    - `next_hop_in_ip_address` - (Optional) Contains the IP address packets should be forwarded to. Next hop values are only allowed in routes where the next hop type is VirtualAppliance
 
-```terraform
-routes = [
-    {
-      name           = "test-route-vnetlocal"
-      address_prefix = "10.2.0.0/32"
-      next_hop_type  = "VnetLocal"
+    Example Input:
+
+    ```terraform
+    routes = {
+        route1 = {
+          name           = "test-route-vnetlocal"
+          address_prefix = "10.2.0.0/32"
+          next_hop_type  = "VnetLocal"
+        }
     }
-]
+    
 ```
 
 Type:
 
 ```hcl
-list(object({
+map(object({
     name                   = string
     address_prefix         = string
     next_hop_type          = string
@@ -168,24 +179,24 @@ list(object({
   }))
 ```
 
-Default: `[]`
+Default: `{}`
 
 ### <a name="input_subnet_resource_ids"></a> [subnet\_resource\_ids](#input\_subnet\_resource\_ids)
 
-Description:  - `subnets` - (Required) A list of subnet ID's to associate the route table to.   
- Each entry in the list must be supplied in the form of an Azure resource ID: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}
+Description:     (Optional) A map of string subnet ID's to associate the route table to.  
+    Each value in the map must be supplied in the form of an Azure resource ID: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}
 
-```terraform
-subnet_resource_ids = [
-    azurerm_subnet.this.id,
-    /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}
-  ]
-]
+    ```terraform
+    subnet_resource_ids = {
+        subnet1 = azurerm_subnet.this.id,
+        subnet2 = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}"
+    }
+    
 ```
 
-Type: `list(string)`
+Type: `map(string)`
 
-Default: `[]`
+Default: `{}`
 
 ### <a name="input_tags"></a> [tags](#input\_tags)
 
