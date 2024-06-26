@@ -4,17 +4,16 @@ data "azurerm_resource_group" "parent" {
 
 # Create Route Table
 resource "azurerm_route_table" "this" {
-  location                      = local.resource_group_location
+  location                      = var.location
   name                          = var.name
   resource_group_name           = data.azurerm_resource_group.parent.name
   disable_bgp_route_propagation = var.disable_bgp_route_propagation
   tags                          = var.tags
 }
 
-
 # Create routes associated to the Route Table
 resource "azurerm_route" "this" {
-  for_each = { for idx, route in var.routes : idx => route }
+  for_each = var.routes
 
   address_prefix         = each.value.address_prefix
   name                   = each.value.name
@@ -26,7 +25,7 @@ resource "azurerm_route" "this" {
 
 # Associate route table with VNets
 resource "azurerm_subnet_route_table_association" "this" {
-  for_each = { for idx, subnet in var.subnet_resource_ids : idx => subnet }
+  for_each = var.subnet_resource_ids
 
   route_table_id = azurerm_route_table.this.id
   subnet_id      = each.value
