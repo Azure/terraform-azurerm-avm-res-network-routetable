@@ -1,12 +1,8 @@
-data "azurerm_resource_group" "parent" {
-  name = var.resource_group_name
-}
-
 # Create Route Table
 resource "azurerm_route_table" "this" {
   location                      = var.location
   name                          = var.name
-  resource_group_name           = data.azurerm_resource_group.parent.name
+  resource_group_name           = var.resource_group_name
   disable_bgp_route_propagation = var.disable_bgp_route_propagation
   tags                          = var.tags
 }
@@ -18,7 +14,7 @@ resource "azurerm_route" "this" {
   address_prefix         = each.value.address_prefix
   name                   = each.value.name
   next_hop_type          = each.value.next_hop_type
-  resource_group_name    = data.azurerm_resource_group.parent.name
+  resource_group_name    = var.resource_group_name
   route_table_name       = azurerm_route_table.this.name
   next_hop_in_ip_address = each.value.next_hop_in_ip_address
 }
