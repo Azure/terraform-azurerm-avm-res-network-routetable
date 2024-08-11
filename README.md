@@ -160,15 +160,14 @@ Description:     (Optional) A map of route objects to create on the route table.
 
     Example Input:
 
-    ```terraform
-    routes = {
-        route1 = {
-          name           = "test-route-vnetlocal"
-          address_prefix = "10.2.0.0/32"
-          next_hop_type  = "VnetLocal"
-        }
+```terraform
+routes = {
+    route1 = {
+      name           = "test-route-vnetlocal"
+      address_prefix = "10.2.0.0/32"
+      next_hop_type  = "VnetLocal"
     }
-    
+}
 ```
 
 Type:
@@ -187,14 +186,16 @@ Default: `{}`
 ### <a name="input_subnet_resource_ids"></a> [subnet\_resource\_ids](#input\_subnet\_resource\_ids)
 
 Description:     (Optional) A map of string subnet ID's to associate the route table to.  
-    Each value in the map must be supplied in the form of an Azure resource ID: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}
+    Each value in the map must be supplied in the form of an Azure resource ID:
+```yaml annotate
+/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}
+```
 
-    ```terraform
-    subnet_resource_ids = {
-        subnet1 = azurerm_subnet.this.id,
-        subnet2 = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}"
-    }
-    
+```terraform
+subnet_resource_ids = {
+    subnet1 = azurerm_subnet.this.id,
+    subnet2 = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}"
+}
 ```
 
 Type: `map(string)`

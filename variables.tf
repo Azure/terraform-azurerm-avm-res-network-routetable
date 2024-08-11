@@ -77,7 +77,7 @@ variable "role_assignments" {
     - `condition_version` - The version of the condition syntax. Valid values are '2.0'.
 
     > Note: only set `skip_service_principal_aad_check` to true if you are assigning a role to a service principal.
-  DESCRIPTION
+DESCRIPTION
   nullable    = false
 }
 
@@ -99,16 +99,16 @@ variable "routes" {
 
     Example Input:
 
-    ```terraform
-    routes = {
-        route1 = {
-          name           = "test-route-vnetlocal"
-          address_prefix = "10.2.0.0/32"
-          next_hop_type  = "VnetLocal"
-        }
+```terraform
+routes = {
+    route1 = {
+      name           = "test-route-vnetlocal"
+      address_prefix = "10.2.0.0/32"
+      next_hop_type  = "VnetLocal"
     }
-    ```
-  DESCRIPTION
+}
+```
+DESCRIPTION
 
   validation {
     condition     = length([for route in var.routes : route.name]) == length(distinct([for route in var.routes : route.name]))
@@ -129,15 +129,18 @@ variable "subnet_resource_ids" {
   default     = {}
   description = <<DESCRIPTION
     (Optional) A map of string subnet ID's to associate the route table to.
-    Each value in the map must be supplied in the form of an Azure resource ID: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}
+    Each value in the map must be supplied in the form of an Azure resource ID: 
+```yaml annotate 
+/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}
+```
 
-    ```terraform
-    subnet_resource_ids = {
-        subnet1 = azurerm_subnet.this.id,
-        subnet2 = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}"
-    }
-    ```
-  DESCRIPTION
+```terraform
+subnet_resource_ids = {
+    subnet1 = azurerm_subnet.this.id,
+    subnet2 = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}"
+}
+```
+DESCRIPTION
 
   validation {
     condition     = alltrue([for subnet in var.subnet_resource_ids : can(regex("/subscriptions/[a-f0-9-]+/resourceGroups/[a-zA-Z0-9_-]+/providers/Microsoft.Network/virtualNetworks/[a-zA-Z0-9_-]+/subnets/[a-zA-Z0-9_-]+", subnet))])
