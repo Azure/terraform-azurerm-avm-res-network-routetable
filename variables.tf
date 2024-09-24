@@ -19,10 +19,10 @@ variable "resource_group_name" {
   nullable    = false
 }
 
-variable "disable_bgp_route_propagation" {
+variable "bgp_route_propagation_enabled" {
   type        = bool
   default     = true
-  description = "(Optional) Boolean flag which controls propagation of routes learned by BGP on that route table. True means disable."
+  description = "(Optional) Boolean flag which controls propagation of routes learned by BGP on that route table. Defaults to true."
 }
 
 variable "enable_telemetry" {

@@ -24,7 +24,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.5.0)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.71.0, < 4.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
 
 - <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
 
@@ -72,9 +72,9 @@ Type: `string`
 
 The following input variables are optional (have default values):
 
-### <a name="input_disable_bgp_route_propagation"></a> [disable\_bgp\_route\_propagation](#input\_disable\_bgp\_route\_propagation)
+### <a name="input_bgp_route_propagation_enabled"></a> [bgp\_route\_propagation\_enabled](#input\_bgp\_route\_propagation\_enabled)
 
-Description: (Optional) Boolean flag which controls propagation of routes learned by BGP on that route table. True means disable.
+Description: (Optional) Boolean flag which controls propagation of routes learned by BGP on that route table. Defaults to true.
 
 Type: `bool`
 
