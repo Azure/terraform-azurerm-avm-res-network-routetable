@@ -178,8 +178,8 @@ Description:     (Optional) A map of string subnet ID's to associate the route t
     Each value in the map must be supplied in the form of an Azure resource ID:
 ```yaml annotate
 /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}
-```
-
+```  
+Example Input:
 ```terraform
 subnet_resource_ids = {
     subnet1 = azurerm_subnet.this.id,

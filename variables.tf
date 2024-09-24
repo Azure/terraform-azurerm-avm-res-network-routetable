@@ -133,7 +133,7 @@ variable "subnet_resource_ids" {
 ```yaml annotate 
 /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}
 ```
-
+Example Input:
 ```terraform
 subnet_resource_ids = {
     subnet1 = azurerm_subnet.this.id,
