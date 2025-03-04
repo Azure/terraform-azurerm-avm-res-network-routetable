@@ -141,11 +141,6 @@ subnet_resource_ids = {
 }
 ```
 DESCRIPTION
-
-  validation {
-    condition     = alltrue([for subnet in var.subnet_resource_ids : can(regex("/subscriptions/[a-f0-9-]+/resourceGroups/[a-zA-Z0-9_-]+/providers/Microsoft.Network/virtualNetworks/[a-zA-Z0-9_-]+/subnets/[a-zA-Z0-9_-]+", subnet))])
-    error_message = "All elements in the list must be in the form of an Azure subnet resource id."
-  }
 }
 
 # tflint-ignore: terraform_unused_declarations
