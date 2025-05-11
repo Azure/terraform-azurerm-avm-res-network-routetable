@@ -42,7 +42,6 @@ resource "random_integer" "region_index" {
 module "naming" {
   source  = "Azure/naming/azurerm"
   version = ">= 0.3.0"
-
 }
 
 # This is required for resource modules
@@ -52,11 +51,12 @@ resource "azurerm_resource_group" "this" {
 }
 
 module "test_route_table" {
-  source              = "../../"
-  enable_telemetry    = var.enable_telemetry
+  source = "../../"
+
+  location            = azurerm_resource_group.this.location
   name                = module.naming.route_table.name_unique
   resource_group_name = azurerm_resource_group.this.name
-  location            = azurerm_resource_group.this.location
+  enable_telemetry    = var.enable_telemetry
 }
 ```
 
