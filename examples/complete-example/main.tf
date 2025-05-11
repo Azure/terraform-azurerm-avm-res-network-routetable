@@ -35,7 +35,6 @@ resource "random_integer" "region_index" {
 module "naming" {
   source  = "Azure/naming/azurerm"
   version = ">= 0.3.0"
-
 }
 
 # This is required for resource modules
@@ -61,12 +60,16 @@ resource "azurerm_subnet" "this" {
 }
 
 module "test_route_table" {
-  source              = "../../"
-  enable_telemetry    = var.enable_telemetry
+  source = "../../"
+
+  location            = azurerm_resource_group.this.location
   name                = module.naming.route_table.name_unique
   resource_group_name = azurerm_resource_group.this.name
-  location            = azurerm_resource_group.this.location
-
+  enable_telemetry    = var.enable_telemetry
+  lock = {
+    kind = "CanNotDelete"
+    name = "Example-Lock"
+  }
   routes = {
     test-route-vnetlocal = {
       name           = "test-route-vnetlocal"
@@ -95,15 +98,9 @@ module "test_route_table" {
       next_hop_type  = "Internet"
     }
   }
-
   subnet_resource_ids = {
     subnet1 = azurerm_subnet.this[0].id,
     subnet2 = azurerm_subnet.this[1].id
-  }
-
-  lock = {
-    kind = "CanNotDelete"
-    name = "Example-Lock"
   }
 }
 
