@@ -1,7 +1,7 @@
 variable "location" {
   type        = string
   description = <<DESCRIPTION
-    (Required) Specifies the supported Azure location for the resource to be deployed. 
+    (Required) Specifies the supported Azure location for the resource to be deployed.
     Changing this forces a new resource to be created.
   DESCRIPTION
   nullable    = false
@@ -91,7 +91,7 @@ variable "routes" {
   }))
   default     = {}
   description = <<DESCRIPTION
-    (Optional) A map of route objects to create on the route table. 
+    (Optional) A map of route objects to create on the route table.
 
     - `name` - (Required) The name of the route.
     - `address_prefix` - (Required) The destination to which the route applies. Can be CIDR (such as 10.1.0.0/16) or Azure Service Tag (such as ApiManagement, AzureBackup or AzureMonitor) format.
@@ -125,13 +125,19 @@ DESCRIPTION
   }
 }
 
+variable "routes_legacy_mode" {
+  type        = bool
+  default     = false
+  description = "(Optional) When set to true, the module will use the legacy mode for managing routes. Defaults to false."
+}
+
 variable "subnet_resource_ids" {
   type        = map(string)
   default     = {}
   description = <<DESCRIPTION
     (Optional) A map of string subnet ID's to associate the route table to.
-    Each value in the map must be supplied in the form of an Azure resource ID: 
-```yaml annotate 
+    Each value in the map must be supplied in the form of an Azure resource ID:
+```yaml annotate
 /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}
 ```
 Example Input:
@@ -144,7 +150,6 @@ subnet_resource_ids = {
 DESCRIPTION
 }
 
-# tflint-ignore: terraform_unused_declarations
 variable "tags" {
   type        = map(string)
   default     = null

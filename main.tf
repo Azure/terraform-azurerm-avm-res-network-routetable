@@ -8,8 +8,19 @@ resource "azurerm_route_table" "this" {
 }
 
 # Create routes associated to the Route Table
+module "routes" {
+  source   = "./modules/route"
+  for_each = var.routes_legacy_mode ? {} : var.routes
+
+  address_prefix      = each.value.address_prefix
+  name                = each.value.name
+  next_hop_type       = each.value.next_hop_type
+  parent_id           = azurerm_route_table.this.id
+  next_hop_ip_address = each.value.next_hop_in_ip_address
+}
+
 resource "azurerm_route" "this" {
-  for_each = var.routes
+  for_each = var.routes_legacy_mode ? var.routes : {}
 
   address_prefix         = each.value.address_prefix
   name                   = each.value.name
@@ -36,7 +47,7 @@ resource "azurerm_management_lock" "this" {
   scope      = azurerm_route_table.this.id
   notes      = var.lock.kind == "CanNotDelete" ? "Cannot delete the resource or its child resources." : "Cannot delete or modify the resource or its child resources."
 
-  depends_on = [azurerm_route.this]
+  depends_on = [azurerm_route.this, module.routes]
 }
 
 # Apply resource level IaM.

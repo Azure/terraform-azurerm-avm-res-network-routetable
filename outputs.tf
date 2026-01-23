@@ -15,8 +15,8 @@ output "resource_id" {
 
 output "routes" {
   description = "This is the full output of the routes."
-  value = zipmap(
+  value = var.routes_legacy_mode ? zipmap(
     [for route in var.routes : route.name],
     values(azurerm_route.this)[*]
-  )
+  ) : module.routes
 }
