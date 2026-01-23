@@ -28,13 +28,17 @@ module "avm-res-network-routetable-route" {
 <!-- markdownlint-disable MD033 -->
 ## Requirements
 
-No requirements.
+The following requirements are needed by this module:
+
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.9, < 2.0)
+
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.4)
 
 ## Resources
 
 The following resources are used by this module:
 
-- [azurerm_route.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/route) (resource)
+- [azapi_resource.route](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
@@ -59,15 +63,9 @@ Description: (Required) The type of Azure hop the packet should be sent to. Poss
 
 Type: `string`
 
-### <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name)
+### <a name="input_parent_id"></a> [parent\_id](#input\_parent\_id)
 
-Description: (Required) The name of the resource group in which the route table exists.
-
-Type: `string`
-
-### <a name="input_route_table_name"></a> [route\_table\_name](#input\_route\_table\_name)
-
-Description: (Required) The name of the route table to which this route belongs.
+Description: (Required) The ID of the parent route table resource.
 
 Type: `string`
 
@@ -75,7 +73,7 @@ Type: `string`
 
 The following input variables are optional (have default values):
 
-### <a name="input_next_hop_in_ip_address"></a> [next\_hop\_in\_ip\_address](#input\_next\_hop\_in\_ip\_address)
+### <a name="input_next_hop_ip_address"></a> [next\_hop\_ip\_address](#input\_next\_hop\_ip\_address)
 
 Description: (Optional) Contains the IP address packets should be forwarded to. Next hop values are only allowed in routes where the next hop type is VirtualAppliance.
 

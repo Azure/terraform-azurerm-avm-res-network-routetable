@@ -21,19 +21,13 @@ variable "next_hop_type" {
   }
 }
 
-variable "resource_group_name" {
+variable "parent_id" {
   type        = string
-  description = "(Required) The name of the resource group in which the route table exists."
+  description = "(Required) The ID of the parent route table resource."
   nullable    = false
 }
 
-variable "route_table_name" {
-  type        = string
-  description = "(Required) The name of the route table to which this route belongs."
-  nullable    = false
-}
-
-variable "next_hop_in_ip_address" {
+variable "next_hop_ip_address" {
   type        = string
   default     = null
   description = "(Optional) Contains the IP address packets should be forwarded to. Next hop values are only allowed in routes where the next hop type is VirtualAppliance."
