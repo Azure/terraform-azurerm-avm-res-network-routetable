@@ -47,7 +47,7 @@ resource "azurerm_management_lock" "this" {
   scope      = azurerm_route_table.this.id
   notes      = var.lock.kind == "CanNotDelete" ? "Cannot delete the resource or its child resources." : "Cannot delete or modify the resource or its child resources."
 
-  depends_on = [azurerm_route.this]
+  depends_on = [azurerm_route.this, module.routes]
 }
 
 # Apply resource level IaM.
