@@ -54,7 +54,7 @@ The following input variables are required:
 
 ### <a name="input_location"></a> [location](#input\_location)
 
-Description:     (Required) Specifies the supported Azure location for the resource to be deployed.   
+Description:     (Required) Specifies the supported Azure location for the resource to be deployed.  
     Changing this forces a new resource to be created.
 
 Type: `string`
@@ -175,6 +175,14 @@ map(object({
 
 Default: `{}`
 
+### <a name="input_routes_legacy_mode"></a> [routes\_legacy\_mode](#input\_routes\_legacy\_mode)
+
+Description: (Optional) When set to true, the module will use the legacy mode for managing routes. Defaults to false.
+
+Type: `bool`
+
+Default: `false`
+
 ### <a name="input_subnet_resource_ids"></a> [subnet\_resource\_ids](#input\_subnet\_resource\_ids)
 
 Description:     (Optional) A map of string subnet ID's to associate the route table to.  
@@ -224,7 +232,13 @@ Description: This is the full output of the routes.
 
 ## Modules
 
-No modules.
+The following Modules are called:
+
+### <a name="module_routes"></a> [routes](#module\_routes)
+
+Source: ../route
+
+Version:
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection
