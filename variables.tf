@@ -125,6 +125,12 @@ DESCRIPTION
   }
 }
 
+variable "routes_legacy_mode" {
+  type        = bool
+  default     = false
+  description = "(Optional) When set to true, the module will use the legacy mode for managing routes. Defaults to false."
+}
+
 variable "subnet_resource_ids" {
   type        = map(string)
   default     = {}
@@ -148,10 +154,4 @@ variable "tags" {
   type        = map(string)
   default     = null
   description = "(Optional) Tags of the resource."
-}
-
-variable "routes_legacy_mode" {
-  type        = bool
-  default     = false
-  description = "(Optional) When set to true, the module will use the legacy mode for managing routes. Defaults to false."
 }

@@ -236,7 +236,7 @@ The following Modules are called:
 
 ### <a name="module_routes"></a> [routes](#module\_routes)
 
-Source: ../route
+Source: ./modules/route
 
 Version:
 
