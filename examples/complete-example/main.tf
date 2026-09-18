@@ -66,7 +66,7 @@ module "test_route_table" {
   location            = azurerm_resource_group.this.location
   name                = module.naming.route_table.name_unique
   resource_group_name = azurerm_resource_group.this.name
-  enable_telemetry    = false
+  enable_telemetry    = var.enable_telemetry
   lock = {
     kind = "CanNotDelete"
     name = "Example-Lock"
