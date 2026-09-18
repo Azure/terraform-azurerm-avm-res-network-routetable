@@ -1,0 +1,7 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Azure/azure-verified-modules-tools/main/src/Avm.Authoring/Resources/Schemas/v1/avm-module-metadata.schema.json",
+  "moduleDisplayName": "Route Table Route",
+  "moduleDescription": "Manages an Azure Route Table Route.",
+  "canonicalType": "Microsoft.Network/routeTables/routes",
+  "telemetryIdPrefix": "46d3xtrf.res.b0e5842"
+}
