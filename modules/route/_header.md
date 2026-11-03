@@ -1,24 +1,20 @@
-# Azure Route Table Root Module
+# Route submodule
 
-This module is used to manage Azure Route Table Routes.
+This submodule manages one route in an existing route table. The root module calls it for each entry in `routes`, and it can also be called directly.
 
 ## Usage
 
-To use this module in your Terraform configuration, you'll need to provide values for the required variables.
-
-### Example
-
-This example shows the basic usage of the module.
-
 ```terraform
-module "avm-res-network-routetable-route" {
+module "route" {
   source = "Azure/avm-res-network-routetable/azurerm//modules/route"
 
-  resource_group_name    = "example-resource-group"
-  route_table_name       = "example-route-table"
-  route_name             = "example-route"
-  address_prefix         = "10.0.0.0/24"
-  next_hop_type          = "VirtualAppliance"
-  next_hop_in_ip_address = "10.0.0.5"
+  address_prefix      = "10.0.0.0/24"
+  location            = "westeurope"
+  name                = "example-route"
+  next_hop_ip_address = "10.0.0.5"
+  next_hop_type       = "VirtualAppliance"
+  parent_id           = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-rg/providers/Microsoft.Network/routeTables/example-route-table"
 }
 ```
+
+`location` is only used for the telemetry deployment and can be omitted when `enable_telemetry` is `false`.
