@@ -46,10 +46,10 @@ resource "azapi_resource" "resource_group" {
 module "test_route_table" {
   source = "../../"
 
-  location            = azapi_resource.resource_group.location
-  name                = module.naming.route_table.name_unique
-  resource_group_name = azapi_resource.resource_group.name
-  enable_telemetry    = var.enable_telemetry
+  location         = azapi_resource.resource_group.location
+  name             = module.naming.route_table.name_unique
+  parent_id        = azapi_resource.resource_group.id
+  enable_telemetry = var.enable_telemetry
   lock = {
     kind = "CanNotDelete"
     name = "Example-Lock"

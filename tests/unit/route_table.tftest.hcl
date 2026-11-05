@@ -31,10 +31,10 @@ mock_provider "random" {}
 mock_provider "time" {}
 
 variables {
-  enable_telemetry    = false
-  location            = "westeurope"
-  name                = "test-rt"
-  resource_group_name = "test-rg"
+  enable_telemetry = false
+  location         = "westeurope"
+  name             = "test-rt"
+  parent_id        = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg"
 }
 
 override_resource {
@@ -73,7 +73,7 @@ run "defaults" {
 
   assert {
     condition     = azapi_resource.this.type == "Microsoft.Network/routeTables@2025-01-01" && azapi_resource.this.parent_id == "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg"
-    error_message = "The route table should use the default API version and the resource group named by resource_group_name."
+    error_message = "The route table should use the default API version and parent_id."
   }
   assert {
     condition     = azapi_resource.this.body.properties.disableBgpRoutePropagation == false && length(azapi_resource.this.body.properties.routes) == 0
@@ -143,7 +143,7 @@ run "parent_id_and_resource_types" {
 
   assert {
     condition     = azapi_resource.this.parent_id == var.parent_id && output.resource.resource_group_name == "other-rg"
-    error_message = "parent_id should take precedence over resource_group_name."
+    error_message = "The route table should be created in parent_id, and the resource output should name its resource group."
   }
   assert {
     condition     = azapi_resource.this.type == "Microsoft.Network/routeTables@2024-05-01"

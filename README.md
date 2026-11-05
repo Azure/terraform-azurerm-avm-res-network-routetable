@@ -19,6 +19,7 @@ This is a module for deploying an Azure static route table. It deploys the route
 
 The route table, its lock and role assignments, and the routes managed while `routes_legacy_mode` is true are now AzAPI resources, and the module no longer uses the AzureRM provider. `moved` blocks carry them to their new addresses in the state, so nothing is recreated. Terraform 1.11 or later is required.
 
+1. `resource_group_name` is replaced by `parent_id`, the resource ID of the resource group. Spell the resource group name exactly as you did in `resource_group_name`, including its case, for example by passing the resource group's `id`. A different spelling plans a replacement of the route table.
 1. `subnet_resource_ids` is no longer supported, because AzAPI cannot remove a subnet association when it is deleted. Remove the input before upgrading. The associations it created stay in Azure and are removed from the state without being changed, so no subnet is routed differently. Terraform still needs the AzureRM provider to remove them from the state, so keep its `provider` block in your root module until the upgrade has been applied. Associate the route table in each subnet's configuration instead, for example with the `route_table` attribute of the subnets of the `Azure/avm-res-network-virtualnetwork/azurerm` module, or the `properties.routeTable.id` property of a subnet. The association already exists, so this changes nothing in Azure, but a separate association resource has to be imported rather than created. A route table that is still associated with a subnet cannot be deleted.
 1. A `ReadOnly` lock blocks the upgrade, because the route table and its role assignments are updated. Change it to `CanNotDelete`, or remove it, until the upgrade is applied.
 1. Cross-tenant role assignments, which set `delegated_managed_identity_resource_id`, need extra steps. The AzureRM provider stored their ID with a `|<tenant-id>` suffix that the `moved` block cannot convert. Before planning, remove each one from the state, then import it at its new address with an `import` block in your root module:
@@ -46,7 +47,6 @@ Route tables deployed with version 0.4.x or earlier keep their routes in place o
 
 Other changes:
 
-- `parent_id` can be set instead of `resource_group_name`.
 - `resource_types`, `retry`, `timeouts` and `ignore_body_changes` cover the route table, its routes, lock and role assignments, and are passed to the route submodule.
 - `lock` accepts `notes`, and `role_assignments` accepts `name`.
 - The `resource` output keeps the attribute names of the `azurerm_route_table` resource, and while `routes_legacy_mode` is true the `routes` output keeps those of the `azurerm_route` resource.
@@ -79,7 +79,6 @@ The following resources are used by this module:
 - [azapi_resource.this](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [terraform_data.telemetry](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
 - [time_sleep.lock_removal](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
-- [azapi_client_config.current](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
 - [azapi_client_config.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
 - [azapi_resource_list.role_definitions](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/resource_list) (data source)
 
@@ -101,9 +100,9 @@ Description: (Required) Specifies the name of the Route Table. Changing this for
 
 Type: `string`
 
-### <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name)
+### <a name="input_parent_id"></a> [parent\_id](#input\_parent\_id)
 
-Description: (Required) The name of the resource group in which to create the resource. Ignored when `parent_id` is set. Changing this forces a new resource to be created.
+Description: (Required) The resource ID of the resource group in which to create the route table, for example `/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-rg`. Changing this forces a new resource to be created.
 
 Type: `string`
 
@@ -177,14 +176,6 @@ object({
     notes = optional(string, null)
   })
 ```
-
-Default: `null`
-
-### <a name="input_parent_id"></a> [parent\_id](#input\_parent\_id)
-
-Description: The resource ID of the resource group in which to create the route table, for example `/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-rg`. When provided, takes precedence over `resource_group_name`. Changing this forces a new resource to be created.
-
-Type: `string`
 
 Default: `null`
 

@@ -18,10 +18,15 @@ variable "name" {
   }
 }
 
-variable "resource_group_name" {
+variable "parent_id" {
   type        = string
-  description = "(Required) The name of the resource group in which to create the resource. Ignored when `parent_id` is set. Changing this forces a new resource to be created."
+  description = "(Required) The resource ID of the resource group in which to create the route table, for example `/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-rg`. Changing this forces a new resource to be created."
   nullable    = false
+
+  validation {
+    condition     = can(provider::azapi::parse_resource_id("Microsoft.Resources/resourceGroups", var.parent_id))
+    error_message = "`parent_id` must be a valid Azure resource group resource ID."
+  }
 }
 
 variable "bgp_route_propagation_enabled" {
@@ -88,17 +93,6 @@ DESCRIPTION
   validation {
     condition     = var.lock != null ? contains(["CanNotDelete", "ReadOnly"], var.lock.kind) : true
     error_message = "Lock kind must be either `\"CanNotDelete\"` or `\"ReadOnly\"`."
-  }
-}
-
-variable "parent_id" {
-  type        = string
-  default     = null
-  description = "The resource ID of the resource group in which to create the route table, for example `/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-rg`. When provided, takes precedence over `resource_group_name`. Changing this forces a new resource to be created."
-
-  validation {
-    condition     = var.parent_id == null || can(provider::azapi::parse_resource_id("Microsoft.Resources/resourceGroups", var.parent_id))
-    error_message = "`parent_id` must be a valid Azure resource group resource ID, or null."
   }
 }
 

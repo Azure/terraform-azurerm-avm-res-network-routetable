@@ -4,7 +4,6 @@ locals {
     CanNotDelete = "Cannot delete the resource or its child resources."
     ReadOnly     = "Cannot delete or modify the resource or its child resources."
   }
-  parent_id = var.parent_id != null ? var.parent_id : "/subscriptions/${data.azapi_client_config.current.subscription_id}/resourceGroups/${var.resource_group_name}"
   # Role names are matched case-insensitively, as the AzureRM provider matched them.
   role_definition_ids_by_name = length(var.role_assignments) > 0 ? {
     for definition in data.azapi_resource_list.role_definitions[0].output.results : lower(definition.role_name) => definition.id...
@@ -27,5 +26,5 @@ locals {
   # Legacy-mode routes use the route submodule's resource type, so that one override applies to the routes
   # in both modes. The default matches the submodule's.
   route_resource_type = coalesce(var.resource_types.network_route_tables_routes.network_route_tables_routes, "Microsoft.Network/routeTables/routes@2022-09-01")
-  subscription_id     = provider::azapi::parse_resource_id("Microsoft.Resources/resourceGroups", local.parent_id).subscription_id
+  subscription_id     = provider::azapi::parse_resource_id("Microsoft.Resources/resourceGroups", var.parent_id).subscription_id
 }

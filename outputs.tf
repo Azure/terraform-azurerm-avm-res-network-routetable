@@ -16,7 +16,7 @@ output "resource" {
     id                            = azapi_resource.this.id
     location                      = azapi_resource.this.location
     name                          = azapi_resource.this.name
-    resource_group_name           = provider::azapi::parse_resource_id("Microsoft.Resources/resourceGroups", local.parent_id).resource_group_name
+    resource_group_name           = provider::azapi::parse_resource_id("Microsoft.Resources/resourceGroups", var.parent_id).resource_group_name
     route = [
       for route in try(azapi_resource.this.output.properties.routes, []) : {
         address_prefix         = try(route.properties.addressPrefix, "")
@@ -47,7 +47,7 @@ output "routes" {
       name                   = route.name
       next_hop_in_ip_address = var.routes[key].next_hop_in_ip_address == null ? "" : var.routes[key].next_hop_in_ip_address
       next_hop_type          = var.routes[key].next_hop_type
-      resource_group_name    = provider::azapi::parse_resource_id("Microsoft.Resources/resourceGroups", local.parent_id).resource_group_name
+      resource_group_name    = provider::azapi::parse_resource_id("Microsoft.Resources/resourceGroups", var.parent_id).resource_group_name
       route_table_name       = azapi_resource.this.name
     }
   } : module.routes
