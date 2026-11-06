@@ -1,9 +1,9 @@
 output "name" {
   description = "The name of the route."
-  value       = azapi_resource.route.name
+  value       = azapi_resource.this.name
 }
 
 output "resource_id" {
   description = "The resource ID of the route."
-  value       = azapi_resource.route.id
+  value       = azapi_resource.this.id
 }

@@ -1,72 +1,44 @@
 terraform {
-  required_version = ">= 1.9, < 2.0"
+  required_version = ">= 1.11, < 2.0"
 
   required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~> 4.0"
+    azapi = {
+      source  = "Azure/azapi"
+      version = "~> 2.12"
     }
     random = {
       source  = "hashicorp/random"
-      version = ">= 3.5.0, < 4.0.0"
+      version = "~> 3.5"
     }
   }
 }
 
-provider "azurerm" {
-  features {}
-}
-
-## Section to provide a random Azure region for the resource group
-# This allows us to randomize the region for the resource group.
-module "regions" {
-  source  = "Azure/regions/azurerm"
-  version = "0.8.2"
-}
-
-# This allows us to randomize the region for the resource group.
+# This picks a random region from the list of regions.
 resource "random_integer" "region_index" {
-  max = length(module.regions.regions) - 1
+  max = length(local.azure_regions) - 1
   min = 0
 }
-
-## End of section to provide a random Azure region for the resource group
 
 # This ensures we have unique CAF compliant names for our resources.
 module "naming" {
   source  = "Azure/avm-utl-naming/azure"
-  version = "0.2.0"
+  version = "0.3.0"
 }
 
 # This is required for resource modules
-resource "azurerm_resource_group" "this" {
-  location = module.regions.regions[random_integer.region_index.result].name
+resource "azapi_resource" "resource_group" {
+  location = local.azure_regions[random_integer.region_index.result]
   name     = module.naming.resource_group.name_unique
-}
-
-resource "azurerm_virtual_network" "this" {
-  location            = azurerm_resource_group.this.location
-  name                = module.naming.virtual_network.name_unique
-  resource_group_name = azurerm_resource_group.this.name
-  address_space       = ["10.0.0.0/16"]
-}
-
-resource "azurerm_subnet" "this" {
-  count = 2
-
-  name                 = format("%s%d", module.naming.subnet.name_unique, count.index)
-  resource_group_name  = azurerm_resource_group.this.name
-  virtual_network_name = azurerm_virtual_network.this.name
-  address_prefixes     = ["10.0.${count.index}.0/24"]
+  type     = "Microsoft.Resources/resourceGroups@2024-03-01"
 }
 
 module "test_route_table" {
   source = "../../"
 
-  location            = azurerm_resource_group.this.location
-  name                = module.naming.route_table.name_unique
-  resource_group_name = azurerm_resource_group.this.name
-  enable_telemetry    = var.enable_telemetry
+  location         = azapi_resource.resource_group.location
+  name             = module.naming.route_table.name_unique
+  parent_id        = azapi_resource.resource_group.id
+  enable_telemetry = var.enable_telemetry
   lock = {
     kind = "CanNotDelete"
     name = "Example-Lock"
@@ -99,8 +71,30 @@ module "test_route_table" {
       next_hop_type  = "Internet"
     }
   }
-  subnet_resource_ids = {
-    subnet1 = azurerm_subnet.this[0].id,
-    subnet2 = azurerm_subnet.this[1].id
+}
+
+# Each subnet is associated with the route table in its own configuration.
+resource "azapi_resource" "virtual_network" {
+  location  = azapi_resource.resource_group.location
+  name      = module.naming.virtual_network.name_unique
+  parent_id = azapi_resource.resource_group.id
+  type      = "Microsoft.Network/virtualNetworks@2024-05-01"
+  body = {
+    properties = {
+      addressSpace = {
+        addressPrefixes = ["10.0.0.0/16"]
+      }
+      subnets = [
+        for index in range(2) : {
+          name = format("%s%d", module.naming.subnet.name_unique, index)
+          properties = {
+            addressPrefix = "10.0.${index}.0/24"
+            routeTable = {
+              id = module.test_route_table.resource_id
+            }
+          }
+        }
+      ]
+    }
   }
 }
