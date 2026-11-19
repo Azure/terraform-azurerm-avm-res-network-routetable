@@ -373,7 +373,7 @@ The following Modules are called:
 
 Source: Azure/avm-utl-interfaces/azure
 
-Version: 0.9.0
+Version: 0.10.0
 
 ### <a name="module_routes"></a> [routes](#module\_routes)
 
